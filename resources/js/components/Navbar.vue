@@ -3,7 +3,7 @@
       <div class="home text-xl font-bold">
           <router-link to="/">Home</router-link>
       </div>
-      <ul v-if="authToken" class="navbar flex gap-4">
+      <ul v-if="this.$store.getters.auth" class="navbar flex gap-4">
           <li>
               <span class="cursor-pointer" @click="logout">Logout</span>
           </li>
@@ -22,14 +22,8 @@
 <script>
 export default {
     name: "Navbar",
-    data(){
-        return {
-            authToken: false,
-        }
-    },
+
     async created(){
-        // getting the existing auth tokens
-        this.authToken = localStorage.getItem('token');
         axios.defaults.headers.common['Authorization'] = `Bearer ${this.authToken}`;
     },
     methods: {
@@ -37,8 +31,9 @@ export default {
 
             await axios.post('/api/logout');
 
-            this.authToken = null;
             localStorage.removeItem('token');
+
+            await this.$store.dispatch("getCurrentUser");
 
             if(this.$router.currentRoute.path !== '/'){
                 await this.$router.push('/');

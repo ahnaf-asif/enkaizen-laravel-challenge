@@ -15,11 +15,31 @@
             }
         </style>
         <link rel="stylesheet" href="{{asset('css/app.css')}}">
+        <link rel="stylesheet" href="{{asset('css/toastr.min.css')}}">
     </head>
     <body class="antialiased">
         <div id="app">
             @yield('content')
         </div>
         <script src="{{ asset('js/app.js') }}"></script>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="{{ asset('js/toastr.min.js') }}"></script>
+        <script>
+            toastr.options = {
+                "closeButton": true,
+                "newestOnTop": false,
+                "progressBar": true,
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "5000",
+                "hideDuration": "2000",
+                "timeOut": "3000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+        </script>
     </body>
 </html>

@@ -89,7 +89,10 @@ export default {
                             });
                             // setting the token in localStorage and updating the auth by dispatching the vuex action
                             localStorage.setItem('token', resp.data);
-                            this.$router.push('/');
+                            axios.defaults.headers.common['Authorization'] = `Bearer ${resp.data}`;
+
+                            await this.$store.dispatch("getCurrentUser");
+                            await this.$router.push('/');
                         }catch(e){
                             console.log(e);
                         }

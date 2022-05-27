@@ -11,6 +11,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\Request;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 
 class ProcessImage implements ShouldQueue
 {
@@ -35,12 +36,23 @@ class ProcessImage implements ShouldQueue
      */
     public function handle(){
 
+
+        $url = $this->request['url'];
+        $contents = file_get_contents($url); // downloading the image
+        $name = time() . '__'. substr($url, strrpos($url, '/') + 1);// unique name
+//        $contents->storeAs('uploads', $name, 'public');
+
+
+        Storage::put('public/'.$name, $contents); // storing file inside public/storage/ folder
+
+        $path = '/storage/'.$name;
+
         $newImage = new Image;
-        $newImage->url = $this->request['url'];
+        $newImage->url = $path;
         $newImage->user_id = $this->request['user_id'];
 
         $newImage->save();
 
-        broadcast(new ImageUploadNotification());
+        broadcast(new ImageUploadNotification($this->request['user_id']));
     }
 }

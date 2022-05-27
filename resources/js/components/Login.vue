@@ -66,8 +66,8 @@ export default {
                     localStorage.setItem('token', resp.data);
 
                     axios.defaults.headers.common['Authorization'] = `Bearer ${resp.data}`;
-
-                    this.$router.push('/');
+                    await this.$store.dispatch("getCurrentUser");
+                    await this.$router.push('/');
 
                 }catch (e) {
                     console.log(e);

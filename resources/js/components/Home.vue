@@ -1,10 +1,10 @@
 <template>
     <div class="">
         <h1 class="text-4xl text-center font-bold mt-10">Image Uploader</h1>
-        <p v-if="user" class="mb-10 text-center">Welcome, {{ user.name }}</p>
+        <p v-if="$store.getters.auth" class="mb-10 text-center">Welcome, {{ $store.getters.auth.name }}</p>
         <hr>
 
-        <div  v-if="authToken" class="image-section px-5 py-5 ">
+        <div  v-if="$store.getters.auth" class="image-section px-5 py-5 ">
             <div class="new-image-btn">
                 <button class="text-white bg-blue-700 py-2 px-5"><router-link to="/image/upload">Add new Image</router-link></button>
             </div>
@@ -27,27 +27,25 @@
         },
         data(){
             return {
-                authToken: null,
                 uploadedImages: [],
                 user: null,
             }
         },
         async created(){
-            this.authToken = localStorage.getItem('token');
-            if(this.authToken){
-
-                try{
-                    // getting the current user
-                    const getUser = await axios.get('/api/user');
-                    this.user = getUser.data;
-                }catch (e) {
-                    console.log('user not found');
+            await this.getImages();
+            window.Echo.channel('image-upload-notification').listen('ImageUploadNotification', async (e)=>{
+                if(this.$store.getters.auth && e.user_id===this.$store.getters.auth.id){
+                    await this.getImages();
                 }
-
+            });
+            if(localStorage.getItem('token')){
+                await this.$store.dispatch("getCurrentUser");
+            }
+        },
+        methods: {
+            async getImages(){
                 try{
-                    // getting user's uploaded images
                     const resp = await axios.get('/api/images');
-                    // console.log(resp);
                     this.uploadedImages = resp.data;
                 }catch(e){
                     console.log('images not found');

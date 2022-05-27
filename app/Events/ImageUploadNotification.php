@@ -19,9 +19,11 @@ class ImageUploadNotification implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct()
+    protected $user_id = null;
+
+    public function __construct($user_id)
     {
-        //
+        $this->user_id = $user_id;
     }
 
     /**
@@ -31,7 +33,8 @@ class ImageUploadNotification implements ShouldBroadcast
      */
     public function broadcastWith(){
         return [
-            'hello' => 'world'
+            'msg' => 'Image uploaded successfully',
+            'user_id' => $this->user_id,
         ];
     }
 
